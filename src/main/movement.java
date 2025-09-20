@@ -14,5 +14,8 @@ public final class Movement {
   private Movement(Instant when, String merchantId, BigDecimal amount, String description) {
     this.when = when; this.merchantId = merchantId; this.amount = amount; this.description = description;
   }
-  // getters...
 }
+
+
+
+
