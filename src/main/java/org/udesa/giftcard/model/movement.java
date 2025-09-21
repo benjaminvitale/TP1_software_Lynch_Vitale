@@ -1,4 +1,4 @@
-package gc.domain;
+package java.org.udesa.giftcard.model;
 import java.math.BigDecimal;
 import java.time.Instant;
 

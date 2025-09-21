@@ -1,4 +1,4 @@
-package org.udesa.tuslibros.model;
+package java.org.udesa.giftcard.model;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

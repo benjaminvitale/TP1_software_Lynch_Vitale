@@ -1,4 +1,4 @@
-package org.udesa.tuslibros.model;
+package java.org.udesa.giftcard.model;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

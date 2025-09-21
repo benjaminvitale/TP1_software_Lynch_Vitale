@@ -1,5 +1,5 @@
 // Token con vencimiento fijo (5')
-package gc.domain;
+package java.org.udesa.giftcard.model;
 import java.time.Duration;
 import java.time.Instant;
 
