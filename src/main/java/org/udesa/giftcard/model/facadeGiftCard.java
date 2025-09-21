@@ -5,7 +5,7 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.*;
 
-public class GiftCardsSystemFacade {
+public class FacadeGiftCard {
     public static String invalidUserAndOrPasswordErrorDescription = "Invalid user and/or password";
     public static String invalidCardIdErrorDescription = "Invalid gift card id";
     public static String cardAlreadyClaimedErrorDescription = "Gift card already claimed";
@@ -17,7 +17,7 @@ public class GiftCardsSystemFacade {
     private final Set<String> validMerchantIds;      // << ahora solo IDs válidos
     private final Session session;                   // login + validación de token
 
-    public GiftCardsSystemFacade(Map<String, String> validUsers,
+    public FacadeGiftCard(Map<String, String> validUsers,
                                  Map<String, GiftCard> giftCards,
                                  Set<String> validMerchantIds,
                                  Clock clock) {

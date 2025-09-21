@@ -10,7 +10,7 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class GiftCardsSystemFacadeTest {
+public class FacadeGiftCardTest {
 
     private Map<String, String> validUsers;
     private Map<String, GiftCard> giftCards;
