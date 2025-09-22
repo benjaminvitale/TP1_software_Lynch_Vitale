@@ -1,40 +1,47 @@
-package java.org.udesa.giftcard.model;
+package org.udesa.giftcard.model;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class TokenTest {
+public class TokenTest {
 
-    @Test
-    void token_no_expira_antes_de_5_minutos() {
-        LocalDateTime t0 = LocalDateTime.of(2025, 1, 1, 12, 0, 0);
-        // TODO: adaptá al constructor/factory real de tu Token:
-        Token tok = new Token("tok", "alice", t0);
+    @Test public void test01TokenEsValidoAlMomentoDeEmision() {
+        Instant issued = Instant.parse("2025-01-01T12:00:00Z");
+        Token tok = Token.issuedFor("alice", "t-1", issued);
 
-        // Suponemos regla: expira ESTRICTAMENTE después de 5'
-        assertFalse(tok.expiredOn(t0.plusMinutes(5)));             // límite incluido (aún válido)
-        assertTrue(tok.expiredOn(t0.plusMinutes(5).plusSeconds(1))); // ya expiró
+        assertDoesNotThrow(() -> tok.assertValidAt(issued));
     }
 
-    @Test
-    void token_expira_exactamente_al_superar_ttl() {
-        LocalDateTime issued = LocalDateTime.of(2025, 2, 1, 10, 0, 0);
-        Token tok = new Token("tok", "alice", issued);
+    @Test public void test02TokenSigueSiendoValidoExactamenteALos5Minutos() {
+        Instant issued = Instant.parse("2025-01-01T12:00:00Z");
+        Token tok = Token.issuedFor("alice", "t-1", issued);
 
-        assertFalse(tok.expiredOn(issued.plus(Duration.ofMinutes(4)).plusSeconds(59)));
-        assertTrue(tok.expiredOn(issued.plus(Duration.ofMinutes(5)).plusSeconds(1)));
+        assertDoesNotThrow(() -> tok.assertValidAt(issued.plus(Duration.ofMinutes(5))));
     }
 
-    @Test
-    void token_exponde_usuario_y_fecha_de_emision() {
-        LocalDateTime issued = LocalDateTime.of(2025, 3, 1, 9, 30, 0);
-        Token tok = new Token("tok", "alice", issued);
+    @Test public void test03TokenExpiraAlSuperarLos5Minutos() {
+        Instant issued = Instant.parse("2025-01-01T12:00:00Z");
+        Token tok = Token.issuedFor("alice", "t-1", issued);
 
-        assertEquals("alice", tok.userId());
-        assertEquals(issued, tok.issuedAt());
+        assertThrowsLike(() -> tok.assertValidAt(issued.plus(Duration.ofMinutes(5)).plusSeconds(1)),
+                Token.Expired);
+    }
+
+    @Test public void test04ExponeUsuarioYValor() {
+        Instant issued = Instant.parse("2025-01-01T12:00:00Z");
+        Token tok = Token.issuedFor("bob", "tok-123", issued);
+
+        assertEquals("bob", tok.userId());
+        assertEquals("tok-123", tok.value());
+    }
+
+    // ===== helper de estilo "TusLibros" =====
+    private void assertThrowsLike(Executable executable, String message) {
+        assertEquals(message, assertThrows(Exception.class, executable).getMessage());
     }
 }

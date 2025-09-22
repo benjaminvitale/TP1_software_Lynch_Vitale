@@ -1,0 +1,17 @@
+plugins { id 'java' }
+
+group = 'org.udesa.giftcard'
+version = '1.0.0'
+
+repositories { mavenCentral() }
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.2')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+test {
+    useJUnitPlatform()
+    testLogging { events "passed", "skipped", "failed" }
+}
+

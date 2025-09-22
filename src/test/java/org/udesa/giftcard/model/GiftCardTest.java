@@ -1,93 +1,104 @@
-package java.org.udesa.giftcard.model;
+package org.udesa.giftcard.model;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class GiftCardTest {
+public class GiftCardTest {
 
-    private GiftCard newCard(String id, String initial) {
-        // TODO: adaptá a tu factory/ctor real (p.ej. GiftCard.identifiedWithBalance(...))
-        return new GiftCard(id, new BigDecimal(initial).setScale(2, RoundingMode.UNNECESSARY));
+    // ===== helpers =====
+    private static GiftCard newCard(String id, String amount) {
+        return GiftCard.identifiedWithBalance(id, new BigDecimal(amount));
     }
-    private Merchant newMerchant(String id) {
-        // TODO: adaptá a tu Merchant real
-        return new Merchant(id);
+    private void assertThrowsLike(Executable ex, String message) {
+        assertEquals(message, assertThrows(Exception.class, ex).getMessage());
+    }
+    @SuppressWarnings("unchecked")
+    private static <T> T readField(Object target, String name) throws Exception {
+        Field f = target.getClass().getDeclaredField(name);
+        f.setAccessible(true);
+        return (T) f.get(target);
     }
 
-    @Test
-    void card_nueva_tiene_balance_inicial_y_no_reclamada() {
+    // ===== tests =====
+
+    @Test public void test01CardNuevaTieneBalanceInicialYNoReclamada() {
         GiftCard c = newCard("CARD-1", "100.00");
         assertEquals(new BigDecimal("100.00"), c.balance());
         assertFalse(c.isClaimed());
+        assertNull(c.ownerUserId());
     }
 
-    @Test
-    void claim_ok_card_libre() {
+    @Test public void test02ClaimOkCardLibre() {
         GiftCard c = newCard("CARD-1", "100.00");
         c.claim("alice");
         assertTrue(c.isClaimed());
         assertEquals("alice", c.ownerUserId());
     }
 
-    @Test
-    void claim_falla_si_ya_reclamada_por_otro_usuario() {
-        GiftCard c = newCard("CARD-1", "100.00");
-        c.claim("bob");
-        RuntimeException ex = assertThrows(RuntimeException.class, () -> c.claim("alice"));
-        // TODO: si tenés constante: assertEquals(GiftCard.AlreadyClaimed, ex.getMessage());
-    }
-
-    @Test
-    void no_se_puede_cobrar_si_no_esta_reclamada() {
-        GiftCard c = newCard("CARD-1", "100.00");
-        Merchant m = newMerchant("M-001");
-        RuntimeException ex = assertThrows(RuntimeException.class,
-                () -> c.charge(m, new BigDecimal("10.00"), "compra", LocalDateTime.now()));
-        // TODO: si tenés constante: assertEquals(GiftCard.NotClaimed, ex.getMessage());
-    }
-
-    @Test
-    void charge_descuenta_del_balance_y_agrega_movimiento() {
+    @Test public void test03ClaimMismoUsuarioEsIdempotente() {
         GiftCard c = newCard("CARD-1", "100.00");
         c.claim("alice");
-        Merchant m = newMerchant("M-001");
+        // no debería fallar si reclama de nuevo el mismo usuario
+        c.claim("alice");
+        assertEquals("alice", c.ownerUserId());
+    }
 
-        c.charge(m, new BigDecimal("30.00"), "compra", LocalDateTime.of(2025,1,1,12,0));
+    @Test public void test04ClaimFallaSiCardYaEsDeOtroUsuario() {
+        GiftCard c = newCard("CARD-1", "100.00");
+        c.claim("bob");
+        assertThrowsLike(() -> c.claim("alice"), GiftCard.AlreadyClaimed);
+    }
+
+    @Test public void test05NoSePuedeCobrarSiNoEstaReclamada() {
+        GiftCard c = newCard("CARD-1", "100.00");
+        assertThrowsLike(
+                () -> c.charge("M-001", new BigDecimal("10.00"), "compra", Instant.parse("2025-01-01T12:00:00Z")),
+                GiftCard.NotClaimed
+        );
+    }
+
+    @Test public void test06ChargeDescuentaBalanceYAgregaMovimiento() throws Exception {
+        GiftCard c = newCard("CARD-1", "100.00");
+        c.claim("alice");
+
+        Instant when = Instant.parse("2025-01-01T12:00:00Z");
+        c.charge("M-001", new BigDecimal("30.00"), "almuerzo", when);
 
         assertEquals(new BigDecimal("70.00"), c.balance());
         assertEquals(1, c.movements().size());
+
+        // inspecciono el Movement por reflexión (no hay getters)
         Movement mv = c.movements().get(0);
-        assertEquals(new BigDecimal("30.00"), mv.amount());
-        assertEquals("M-001", mv.merchantId());
-        assertEquals("compra", mv.description());
+        assertEquals(when,       readField(mv, "when"));
+        assertEquals("M-001",    readField(mv, "merchantId"));
+        assertEquals(new BigDecimal("30.00"), readField(mv, "amount"));
+        assertEquals("almuerzo", readField(mv, "description"));
     }
 
-    @Test
-    void rechaza_cargo_por_saldo_insuficiente() {
+    @Test public void test07RechazaCargoPorSaldoInsuficiente() {
         GiftCard c = newCard("CARD-2", "20.00");
         c.claim("alice");
-        Merchant m = newMerchant("M-001");
-
-        RuntimeException ex = assertThrows(RuntimeException.class,
-                () -> c.charge(m, new BigDecimal("25.00"), "compra", LocalDateTime.now()));
-        // TODO: si tenés constante: assertEquals(GiftCard.NotEnoughBalance, ex.getMessage());
+        assertThrowsLike(
+                () -> c.charge("M-001", new BigDecimal("25.00"), "compra", Instant.now()),
+                GiftCard.NotEnoughBalance
+        );
     }
 
-    @Test
-    void movimientos_quedan_en_orden_cronologico_de_carga() {
+    @Test public void test08MontoConMasDe2DecimalesLanzaArithmeticException() {
         GiftCard c = newCard("CARD-1", "100.00");
         c.claim("alice");
-        Merchant m = newMerchant("M-001");
+        assertThrows(ArithmeticException.class,
+                () -> c.charge("M-001", new BigDecimal("10.001"), "compra", Instant.now()));
+    }
 
-        c.charge(m, new BigDecimal("10.00"), "m1", LocalDateTime.of(2025,1,1,10,0));
-        c.charge(m, new BigDecimal("5.00"), "m2", LocalDateTime.of(2025,1,1,11,0));
-
-        assertEquals("m1", c.movements().get(0).description());
-        assertEquals("m2", c.movements().get(1).description());
+    @Test public void test09IdSeExponeCorrectamente() {
+        GiftCard c = newCard("CARD-XYZ", "5");
+        assertEquals("CARD-XYZ", c.id());
     }
 }

@@ -1,11 +1,11 @@
-package java.org.udesa.giftcard.model;
+package org.udesa.giftcard.model;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,23 +14,11 @@ public class FacadeGiftCardTest {
 
     private Map<String, String> validUsers;
     private Map<String, GiftCard> giftCards;
-    private Map<String, Merchant> merchantsById;
-    private Map<String, String> merchantApiKeys;
-    private TestClock clock;
-    private GiftCardsSystemFacade facade;
-
-    // Helpers de dominio (adaptá a tus constructores)
-    private static GiftCard newCard(String id, String initial) {
-        // TODO: reemplazá por tu forma real de crear GiftCard (ej: GiftCard.identifiedWithBalance(id, new BigDecimal(initial)))
-        return new GiftCard(id, new BigDecimal(initial)); // si tu clase difiere, cambialo
-    }
-    private static Merchant newMerchant(String id) {
-        // TODO: reemplazá por tu Merchant real (si necesitás más campos)
-        return new Merchant(id);
-    }
+    private Set<String> validMerchantIds;
+    private FacadeGiftCard facade;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         validUsers = new HashMap<>();
         validUsers.put("alice", "pwd");
         validUsers.put("bob", "secret");
@@ -39,128 +27,118 @@ public class FacadeGiftCardTest {
         giftCards.put("CARD-1", newCard("CARD-1", "100.00"));
         giftCards.put("CARD-2", newCard("CARD-2", "50.00"));
 
-        merchantsById = new HashMap<>();
-        merchantsById.put("M-001", newMerchant("M-001"));
+        validMerchantIds = new HashSet<>(List.of("M-001")); // merchant válido
 
-        merchantApiKeys = new HashMap<>();
-        merchantApiKeys.put("M-001", "KEY-001");
+        facade = new FacadeGiftCard(validUsers, giftCards, validMerchantIds, new Clock());
+    }
 
-        clock = TestClock.fixedAt(LocalDateTime.of(2025, 1, 1, 12, 0, 0));
-
-        facade = new GiftCardsSystemFacade(
-                validUsers, giftCards, merchantsById, merchantApiKeys, clock
+    // ===== helpers de dominio =====
+    private static GiftCard newCard(String id, String initial) {
+        return GiftCard.identifiedWithBalance(
+                id, new BigDecimal(initial).setScale(2, RoundingMode.UNNECESSARY)
         );
     }
 
-    @Test
-    void login_ok_emite_token() {
+    private void assertThrowsLike(Executable executable, String message) {
+        assertEquals(message, assertThrows(Exception.class, executable).getMessage());
+    }
+
+    // ================= TESTS =================
+
+    @Test public void test01LoginOkEmiteToken() {
         String token = facade.loginFor("alice", "pwd");
         assertNotNull(token);
         assertFalse(token.isBlank());
     }
 
-    @Test
-    void login_falla_credenciales_invalidas() {
-        RuntimeException ex = assertThrows(RuntimeException.class,
-                () -> facade.loginFor("alice", "wrong"));
-        assertEquals(GiftCardsSystemFacade.invalidUserAndOrPasswordErrorDescription, ex.getMessage());
+    @Test public void test02LoginFallaConCredencialesInvalidas() {
+        assertThrowsLike(
+                () -> facade.loginFor("alice", "WRONG"),
+                FacadeGiftCard.invalidUserAndOrPasswordErrorDescription
+        );
     }
 
-    @Test
-    void token_expira_a_los_5_minutos() {
-        String token = facade.loginFor("alice", "pwd");
-        // Reclamo ok dentro de ventana
-        facade.claimCardIdentifiedAs(token, "CARD-1");
-
-        // Adelanto 6 minutos ⇒ token vencido
-        clock.advanceMinutes(6);
-
-        RuntimeException ex = assertThrows(RuntimeException.class,
-                () -> facade.balanceOfCardIdentifiedAs(token, "CARD-1"));
-        assertEquals(GiftCardsSystemFacade.tokenHasExpiredErrorDescription, ex.getMessage());
-    }
-
-    @Test
-    void claim_ok_card_libre() {
+    @Test public void test03ClaimOkCardLibre() {
         String token = facade.loginFor("alice", "pwd");
         facade.claimCardIdentifiedAs(token, "CARD-2");
 
-        // Verifica dueño
-        GiftCard card = giftCards.get("CARD-2");
-        assertTrue(card.isClaimed());
-        assertEquals("alice", card.ownerUserId()); // adaptá si tu getter difiere
+        GiftCard c = giftCards.get("CARD-2");
+        assertTrue(c.isClaimed());
+        assertEquals("alice", c.ownerUserId());
     }
 
-    @Test
-    void claim_falla_si_card_ya_es_de_otro_usuario() {
-        // Bob reclama primero
-        String bobToken = facade.loginFor("bob", "secret");
-        facade.claimCardIdentifiedAs(bobToken, "CARD-1");
+    @Test public void test04ClaimFallaSiCardEsDeOtroUsuario() {
+        String bob = facade.loginFor("bob", "secret");
+        facade.claimCardIdentifiedAs(bob, "CARD-1");
 
-        // Alice intenta reclamar la misma
-        String aliceToken = facade.loginFor("alice", "pwd");
-        RuntimeException ex = assertThrows(RuntimeException.class,
-                () -> facade.claimCardIdentifiedAs(aliceToken, "CARD-1"));
-        assertEquals(GiftCardsSystemFacade.cardAlreadyClaimedErrorDescription, ex.getMessage());
+        String alice = facade.loginFor("alice", "pwd");
+        assertThrowsLike(
+                () -> facade.claimCardIdentifiedAs(alice, "CARD-1"),
+                FacadeGiftCard.cardAlreadyClaimedErrorDescription
+        );
     }
 
-    @Test
-    void merchant_valido_cobra_card_del_usuario() {
-        // Claim por Alice
+    @Test public void test05BalanceDevuelveElMontoActual() {
         String token = facade.loginFor("alice", "pwd");
         facade.claimCardIdentifiedAs(token, "CARD-1");
 
-        BigDecimal balanceInicial = giftCards.get("CARD-1").balance();
-        BigDecimal monto = new BigDecimal("30.00").setScale(2, RoundingMode.UNNECESSARY);
-
-        // Merchant carga
-        facade.chargeNotifiedByMerchant("M-001", "KEY-001", "alice", "CARD-1", monto);
-
-        BigDecimal balanceFinal = giftCards.get("CARD-1").balance();
-        assertEquals(balanceInicial.subtract(monto), balanceFinal);
-        assertFalse(giftCards.get("CARD-1").movements().isEmpty());
+        BigDecimal balance = facade.balanceOfCardIdentifiedAs(token, "CARD-1");
+        assertEquals(new BigDecimal("100.00").setScale(2), balance);
     }
 
-    @Test
-    void rechaza_cargo_por_saldo_insuficiente() {
-        // Alice reclama CARD-2 (tiene 50.00)
-        String token = facade.loginFor("alice", "pwd");
-        facade.claimCardIdentifiedAs(token, "CARD-2");
-
-        RuntimeException ex = assertThrows(RuntimeException.class,
-                () -> facade.chargeNotifiedByMerchant("M-001", "KEY-001", "alice", "CARD-2", new BigDecimal("60.00")));
-        assertEquals(GiftCardsSystemFacade.notEnoughBalanceErrorDescription, ex.getMessage());
-    }
-
-    @Test
-    void rechaza_cargo_si_card_no_es_del_usuario() {
-        // Bob reclama CARD-1
-        String bobToken = facade.loginFor("bob", "secret");
-        facade.claimCardIdentifiedAs(bobToken, "CARD-1");
-
-        // Merchant intenta cobrar a nombre de Alice (mismatch)
-        RuntimeException ex = assertThrows(RuntimeException.class,
-                () -> facade.chargeNotifiedByMerchant("M-001", "KEY-001", "alice", "CARD-1", new BigDecimal("10.00")));
-        assertEquals(GiftCardsSystemFacade.cardNotClaimedByUserErrorDescription, ex.getMessage());
-    }
-
-    @Test
-    void rechaza_cargo_si_merchant_invalido() {
+    @Test public void test06MerchantValidoPuedeCobrarCardDelUsuario() {
         String token = facade.loginFor("alice", "pwd");
         facade.claimCardIdentifiedAs(token, "CARD-1");
 
-        RuntimeException ex = assertThrows(RuntimeException.class,
-                () -> facade.chargeNotifiedByMerchant("M-XXX", "KEY-001", "alice", "CARD-1", new BigDecimal("10.00")));
-        assertEquals(GiftCardsSystemFacade.invalidMerchantErrorDescription, ex.getMessage());
+        facade.chargeNotifiedByMerchant("M-001", "alice", "CARD-1",
+                new BigDecimal("30.00"));
+
+        assertEquals(new BigDecimal("70.00").setScale(2),
+                giftCards.get("CARD-1").balance());
+        assertEquals(1, giftCards.get("CARD-1").movements().size());
     }
 
-    @Test
-    void rechaza_cargo_si_apiKey_invalida() {
+    @Test public void test07RechazaCargoPorSaldoInsuficiente() {
+        String token = facade.loginFor("alice", "pwd");
+        facade.claimCardIdentifiedAs(token, "CARD-2"); // 50.00
+
+        assertThrowsLike(
+                () -> facade.chargeNotifiedByMerchant("M-001", "alice", "CARD-2",
+                        new BigDecimal("60.00")),
+                FacadeGiftCard.notEnoughBalanceErrorDescription
+        );
+    }
+
+    @Test public void test08RechazaCargoSiMerchantEsInvalido() {
         String token = facade.loginFor("alice", "pwd");
         facade.claimCardIdentifiedAs(token, "CARD-1");
 
-        RuntimeException ex = assertThrows(RuntimeException.class,
-                () -> facade.chargeNotifiedByMerchant("M-001", "BAD-KEY", "alice", "CARD-1", new BigDecimal("10.00")));
-        assertEquals(GiftCardsSystemFacade.invalidMerchantErrorDescription, ex.getMessage());
+        assertThrowsLike(
+                () -> facade.chargeNotifiedByMerchant("M-XXX", "alice", "CARD-1",
+                        new BigDecimal("10.00")),
+                FacadeGiftCard.invalidMerchantErrorDescription
+        );
+    }
+
+    @Test public void test09RechazaCargoSiLaCardNoPerteneceAlUsuario() {
+        String bob = facade.loginFor("bob", "secret");
+        facade.claimCardIdentifiedAs(bob, "CARD-1"); // ahora es de Bob
+
+        assertThrowsLike(
+                () -> facade.chargeNotifiedByMerchant("M-001", "alice", "CARD-1",
+                        new BigDecimal("10.00")),
+                FacadeGiftCard.cardNotClaimedByUserErrorDescription
+        );
+    }
+
+    @Test public void test10MovementsDevuelveLosCargosRealizados() {
+        String token = facade.loginFor("alice", "pwd");
+        facade.claimCardIdentifiedAs(token, "CARD-1");
+
+        facade.chargeNotifiedByMerchant("M-001", "alice", "CARD-1",
+                new BigDecimal("5.00"));
+        var movements = facade.movementsOfCardIdentifiedAs(token, "CARD-1");
+
+        assertEquals(1, movements.size());
     }
 }

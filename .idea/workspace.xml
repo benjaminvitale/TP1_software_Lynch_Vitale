@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="fa519eee-b32d-4cf6-b688-7381d613432d" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/udesa/giftcard/model/GiftCard.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/udesa/giftcard/model/SessionTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project_prueba/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project_prueba/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project_prueba/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project_prueba/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project_prueba/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project_prueba/project_prueba.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project_prueba/src/Main.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/udesa/giftcard/model/clock.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/udesa/giftcard/model/Clock.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/udesa/giftcard/model/facadeGiftCard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/udesa/giftcard/model/FacadeGiftCard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/udesa/giftcard/model/giftcard.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/udesa/giftcard/model/movement.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/udesa/giftcard/model/Movement.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/udesa/giftcard/model/session.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/udesa/giftcard/model/Session.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/udesa/giftcard/model/token.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/udesa/giftcard/model/Token.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/udesa/giftcard/model/FacadeGiftCardTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/udesa/giftcard/model/FacadeGiftCardTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/udesa/giftcard/model/GiftCardTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/udesa/giftcard/model/GiftCardTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/udesa/giftcard/model/MerchantTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/udesa/giftcard/model/MovementTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/udesa/giftcard/model/MovementTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/udesa/giftcard/model/TokenTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/udesa/giftcard/model/TokenTest.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="TP1_software_Lynch_Vitale" type="f1a62948:ProjectNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="TP1_software_Lynch_Vitale" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="TP1_software_Lynch_Vitale" type="f1a62948:ProjectNode" />
+                <item name="Run Configurations" type="7b0102dc:RunConfigurationsNode" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Gradle.FacadeGiftCardTest.executor": "Run",
+    "Gradle.GiftCardTest.executor": "Run",
+    "Gradle.MovementTest.executor": "Run",
+    "Gradle.SessionTest.executor": "Run",
+    "Gradle.TP1_software_Lynch_Vitale [compileTestJava].executor": "Run",
+    "Gradle.TP1_software_Lynch_Vitale [testClasses].executor": "Run",
+    "Gradle.TP1_software_Lynch_Vitale.executor": "Run",
+    "Gradle.TokenTest.executor": "Run",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "git-widget-placeholder": "main",
+    "settings.editor.selected.configurable": "advanced.settings"
+  }
+}]]></component>
+  <component name="RunAnythingCache">
+    <option name="myCommands">
+      <command value="gradle testClasses" />
+      <command value="gradle compileTestJava" />
+    </option>
+  </component>
+  <component name="RunManager" selected="Gradle.TokenTest">
+    <configuration name="FacadeGiftCardTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;org.udesa.giftcard.model.FacadeGiftCardTest&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="GiftCardTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;org.udesa.giftcard.model.GiftCardTest&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="MovementTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;org.udesa.giftcard.model.MovementTest&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="SessionTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;org.udesa.giftcard.model.SessionTest&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="TokenTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;org.udesa.giftcard.model.TokenTest&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Gradle.TokenTest" />
+        <item itemvalue="Gradle.SessionTest" />
+        <item itemvalue="Gradle.MovementTest" />
+        <item itemvalue="Gradle.GiftCardTest" />
+        <item itemvalue="Gradle.FacadeGiftCardTest" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="TaskManager">
+    <servers />
+  </component>
+</project>
